@@ -18,7 +18,27 @@ foreach my $urlFile (@urlFiles) {
 	
 	warn "$urlFile is empty\n" and next if $url eq '';
 	
-	mkpath(catdir($history, $tag));
+	my $tagDir = catdir($history, $tag);
 	
-	print "$urlFile: $url ($tag)\n";
+	mkpath($tagDir);
+	
+	# glob the current files in tagDir, so that we can check if the file we are about to download is the same as the most recent one (and delete the new one if it is)
+	my @oldFiles = reverse sort glob catfile($tagDir, '????-??-??--??-??-??');
+	my $oldest = '';
+	$oldest = shift @oldFiles if @oldFiles;
+	
+	# poor man's solution, for now
+	my $curDate = qx'echo -n "`date +"%Y-%m-%d--%H-%M-%S"`"';
+	my $newFile = catfile($tagDir, $curDate);
+	system('wget', '-q', '-O', $newFile, $url) == 0 or die "system failed: $?\n";
+	
+	if ($oldest ne '') {
+		my $oldContents = read_file($oldest);
+		my $newContents = read_file($newFile);
+		
+		# this could be done better, like with md5 hashes or something...
+		if ($oldContents eq $newContents) {
+			unlink $newFile; # if the new one is exactly the same as the one just previous, we want to completely ignore the bugger
+		}
+	}
 }
