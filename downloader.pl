@@ -1,6 +1,8 @@
 #!/usr/bin/perl -w
 use strict;
 
+# this script was meant to run on an hourly cron job or similar
+
 use FindBin qw( $RealBin );
 use File::Spec::Functions qw( catfile catdir );
 use File::Slurp qw( read_file );
