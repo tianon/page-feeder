@@ -42,5 +42,9 @@ foreach my $urlFile (@urlFiles) {
 		if ($oldContents eq $newContents) {
 			unlink $newFile; # if the new one is exactly the same as the one just previous, we want to completely ignore the bugger
 		}
+		else {
+			my $feedCache = catfile($tagDir, 'feed_cache.xml');
+			unlink $feedCache if -e $feedCache;
+		}
 	}
 }
