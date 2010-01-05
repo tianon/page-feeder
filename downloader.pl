@@ -39,7 +39,7 @@ foreach my $urlFile (@urlFiles) {
 		my $newContents = read_file($newFile);
 		
 		# this could be done better, like with md5 hashes or something...
-		if ($oldContents eq $newContents) {
+		if ($oldContents eq $newContents || $newContents eq '') {
 			unlink $newFile; # if the new one is exactly the same as the one just previous, we want to completely ignore the bugger
 		}
 		else {
